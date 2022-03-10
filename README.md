@@ -3,23 +3,56 @@
 ### [[project page]](TODO) [[paper]](TODO) [[video]](TODO) [[demo]](TODO)
 
 
-## Installation
+## Setup
 
-oh no
-
-
-## Training
+###Clone this repository
 
 ```
-TODO
+git clone https://github.com/carolineec/informative-drawings.git
+cd informative-drawings
+```
+
+###Install dependencies
+We provide an environment.yml file listing the dependences and to create a conda environment. Our model uses Pytorch 1.7.1
+
+```
+conda env create -f environment.yml
+conda activate drawings
 ```
 
 ## Testing
-
+Pre-trained model is available here, place the model weights in `checkpoints`.
 
 ```
-TODO
+cd checkpoints
+unzip model.zip
 ```
+
+run pre-trained model on images in `dataroot`. Results will be saved to `output` directory by default. Replace `MYDATAPATH` with the folder path where your images are saved.
+
+```
+python test.py --name contourstyle --dataroot MYDATAPATH
+```
+
+## Training
+
+We provide a pre-trained networks for mapping ImageNet features into depth images here. Place the pre-trained features to depth network in 'depthroot'
+
+```
+cd depthroot
+unzip feats2depth.zip
+```
+
+To train a model from scratch use the following command.
+
+```
+python train.py --name contourstyle \
+--dataroot pathtophotographs \
+--depthroot pathtodepthdataset \
+--root2 pathtolinedrawings \
+--no_flip
+```
+Because the model start making grayscale photos if trained enough, it is recommended to save model checkpoints frequently by using `--save_epoch_freq 1`.
 
 ## Citation
 

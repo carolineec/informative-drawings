@@ -17,8 +17,8 @@ import numpy as np
 from utils import channel2width
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--name', type=str, help='name of this experiment')
-parser.add_argument('--checkpoints_dir', required=True, type=str, help='Where the model checkpoints are saved')
+parser.add_argument('--name', required=True, type=str, help='name of this experiment')
+parser.add_argument('--checkpoints_dir', type=str, default='checkpoints', help='Where the model checkpoints are saved')
 parser.add_argument('--results_dir', type=str, default='output', help='where to save result images')
 parser.add_argument('--geom_name', type=str, default='', help='name of the geometry predictor')
 parser.add_argument('--batchSize', type=int, default=1, help='size of the batches')

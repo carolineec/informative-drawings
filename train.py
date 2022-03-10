@@ -25,6 +25,7 @@ import os
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--name', type=str, help='name of this experiment')
+parser.add_argument('--checkpoints_dir', type=str, default='checkpoints', help='Where checkpoints are saved')
 parser.add_argument('--epoch', type=int, default=0, help='starting epoch')
 parser.add_argument('--n_epochs', type=int, default=100, help='number of epochs of training')
 parser.add_argument('--batchSize', type=int, default=4, help='size of the batches')
@@ -35,7 +36,7 @@ parser.add_argument('--n_cpu', type=int, default=8, help='number of cpu threads 
 parser.add_argument('--dataroot', type=str, default='datasets/vangogh2photo/', help='photograph directory root directory')
 parser.add_argument('--root2', type=str, default='', help='line drawings dataset root directory')
 parser.add_argument('--depthroot', type=str, default='', help='dataset of corresponding ground truth depth maps')
-parser.add_argument('--feats2Geom_path', type=str, default='feats2depth2.pth', 
+parser.add_argument('--feats2Geom_path', type=str, default='depthroot/feats2depth2.pth', 
                                 help='path to pretrained features to depth map network')
 
 ### architecture and optimizers
@@ -87,7 +88,6 @@ parser.add_argument('--num_classes', type=int, default=55, help='number of class
 parser.add_argument('--cos_clip', type=int, default=0, help='use cosine similarity for CLIP semantic loss')
 
 ### save options
-parser.add_argument('--checkpoints_dir', type=str, default='experiments', help='Where checkpoints are saved')
 parser.add_argument('--save_epoch_freq', type=int, default=1000, help='how often to save the latest model in steps')
 parser.add_argument('--slow', type=int, default=0, help='only frequently save netG_A, netGeom')
 parser.add_argument('--log_int', type=int, default=50, help='display frequency for tensorboard')
