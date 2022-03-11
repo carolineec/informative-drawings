@@ -1,6 +1,6 @@
 # Informative Drawings: Learning to generate line drawings that convey geometry and semantics
 
-### [[project page]](TODO) [[paper]](TODO) [[video]](TODO) [[demo]](TODO)
+### [[project page]](TODO) [[paper]](TODO) [[video]](TODO) [[demo]](https://huggingface.co/spaces/carolineec/informativedrawings)
 
 
 ## Setup
@@ -45,10 +45,10 @@ cd checkpoints/feats2Geom
 unzip feats2depth.zip
 ```
 
-To train a model from scratch use the following command.
+To train a model with name `myexperiment` from scratch use the following command.
 
 ```
-python train.py --name contourstyle \
+python train.py --name myexperiment \
 --dataroot pathtophotographs \
 --depthroot pathtodepthdataset \
 --root2 pathtolinedrawings \
