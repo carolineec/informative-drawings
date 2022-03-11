@@ -5,14 +5,14 @@
 
 ## Setup
 
-###Clone this repository
+### Clone this repository
 
 ```
 git clone https://github.com/carolineec/informative-drawings.git
 cd informative-drawings
 ```
 
-###Install dependencies
+### Install dependencies
 We provide an environment.yml file listing the dependences and to create a conda environment. Our model uses Pytorch 1.7.1
 
 ```
@@ -28,7 +28,7 @@ cd checkpoints
 unzip model.zip
 ```
 
-run pre-trained model on images in `dataroot`. Results will be saved to `output` directory by default. Replace `MYDATAPATH` with the folder path where your images are saved.
+run pre-trained model on images in `dataroot`. Results will be saved to the `results` directory by default. Replace `MYDATAPATH` with the folder path where your images are saved.
 
 ```
 python test.py --name contourstyle --dataroot MYDATAPATH
@@ -36,10 +36,10 @@ python test.py --name contourstyle --dataroot MYDATAPATH
 
 ## Training
 
-We provide a pre-trained networks for mapping ImageNet features into depth images here. Place the pre-trained features to depth network in 'depthroot'
+We provide a pre-trained networks for mapping ImageNet features into depth images here. Place the pre-trained features to depth network in `feats2Geom`
 
 ```
-cd depthroot
+cd feats2Geom
 unzip feats2depth.zip
 ```
 
