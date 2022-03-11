@@ -21,25 +21,27 @@ conda activate drawings
 ```
 
 ## Testing
-Pre-trained model is available here, place the model weights in `checkpoints`.
+Pre-trained model is available [here](https://drive.google.com/file/d/1up167zkluR-RIUdr433JbQU43_w9hbgg/view?usp=sharing), place the model weights in `checkpoints`.
 
 ```
 cd checkpoints
 unzip model.zip
 ```
 
-run pre-trained model on images in `dataroot`. Results will be saved to the `results` directory by default. Replace `MYDATAPATH` with the folder path where your images are saved.
+run pre-trained model on images in `--dataroot`. Replace `examples ` with the folder path containing your input images.
 
 ```
-python test.py --name contourstyle --dataroot MYDATAPATH
+python test.py --name contourstyle --dataroot examples
 ```
+
+Results will be saved to the `results` directory by default. You can change the save location by specifying the file path with `--results_dir`. 
 
 ## Training
 
-We provide a pre-trained networks for mapping ImageNet features into depth images here. Place the pre-trained features to depth network in `feats2Geom`
+We provide a pre-trained networks for mapping ImageNet features into depth images [here](https://drive.google.com/file/d/1XYpn7Kgr7HaSnNOVdOeAhAX8FM4YAitl/view?usp=sharing). Place the pre-trained features to depth network in the `./checkpoints/feats2Geom` folder.
 
 ```
-cd feats2Geom
+cd checkpoints/feats2Geom
 unzip feats2depth.zip
 ```
 
