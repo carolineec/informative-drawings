@@ -36,7 +36,7 @@ parser.add_argument('--n_cpu', type=int, default=8, help='number of cpu threads 
 parser.add_argument('--dataroot', type=str, default='datasets/vangogh2photo/', help='photograph directory root directory')
 parser.add_argument('--root2', type=str, default='', help='line drawings dataset root directory')
 parser.add_argument('--depthroot', type=str, default='', help='dataset of corresponding ground truth depth maps')
-parser.add_argument('--feats2Geom_path', type=str, default='depthroot/feats2depth2.pth', 
+parser.add_argument('--feats2Geom_path', type=str, default='feats2Geom/feats2depth2.pth', 
                                 help='path to pretrained features to depth map network')
 
 ### architecture and optimizers
