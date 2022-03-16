@@ -1,6 +1,6 @@
 # Informative Drawings: Learning to generate line drawings that convey geometry and semantics
 
-### [[project page]](TODO) [[paper]](TODO) [[video]](TODO) [[demo]](https://huggingface.co/spaces/carolineec/informativedrawings)
+### [[project page]](https://carolineec.github.io/informative_drawings/) [[paper]](TODO) [[video]](TODO) [[demo]](https://huggingface.co/spaces/carolineec/informativedrawings)
 
 
 ## Setup
@@ -20,6 +20,13 @@ conda env create -f environment.yml
 conda activate drawings
 ```
 
+Use the following command to install [CLIP](https://github.com/openai/CLIP) (only needed for training).
+
+```
+conda activate drawings
+pip install git+https://github.com/openai/CLIP.git
+```
+
 ## Testing
 Pre-trained model is available [here](https://drive.google.com/file/d/1up167zkluR-RIUdr433JbQU43_w9hbgg/view?usp=sharing), place the model weights in `checkpoints`.
 
@@ -31,7 +38,7 @@ unzip model.zip
 run pre-trained model on images in `--dataroot`. Replace `examples ` with the folder path containing your input images.
 
 ```
-python test.py --name contourstyle --dataroot examples
+python test.py --name anime_style --dataroot examples
 ```
 
 Results will be saved to the `results` directory by default. You can change the save location by specifying the file path with `--results_dir`. 
@@ -61,7 +68,12 @@ Because the model start making grayscale photos if trained enough, it is recomme
 If you find this work useful please use the following citation:
 
 ```
-TODO
+ @article{chan2022drawings,
+	      title={Learning to generate line drawings that convey geometry and semantics},
+	      author={Chan, Caroline and Durand, Fredo and Isola, Phillip},
+	      journal={arXiv preprint,
+	      year={2022}
+	      }
 ```
 
 ## Acknowledgements

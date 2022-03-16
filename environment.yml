@@ -4,25 +4,20 @@ channels:
   - defaults
 dependencies:
   - python
-  - cudatoolkit
   - pytorch
-  - cudnn
   - torchvision
   - torchaudio
   - numpy
   - scipy
-  - matplotlib
-  - pandas
-  - jupyter
   - pip
   - tensorboard
-  - tqdm
   - pillow
   - opencv
   - scikit-learn 
-  - pandas
-  - seaborn
   - pip:
      - oyaml
-     - clip
-
+     - dominate
+     - ninja
+     - ftfy
+     - tqdm
+     - regex
