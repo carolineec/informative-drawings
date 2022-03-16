@@ -65,9 +65,9 @@ Replace the example data `examples/train/photos`, `examples/train/depthmaps`, an
 
 Because the model can start making grayscale photos after some training, it is recommended to save model checkpoints frequently by adding the flag `--save_epoch_freq 1`.
 
-### Depth Data
+### Depth Maps
 
-For training, geometry supervision requires depth maps for the dataset of photographs. To create psuedo-ground truth depth maps we rely on a pretrained model from [Boosting Monocular Depth Estimation Models to High-Resolution via Content-Adaptive Multi-Resolution Merging](http://yaksoy.github.io/highresdepth/).
+For training, geometry supervision requires depth maps for the dataset of photographs. To produce psuedo-ground truth depth maps we rely on a pretrained model from [Boosting Monocular Depth Estimation Models to High-Resolution via Content-Adaptive Multi-Resolution Merging](http://yaksoy.github.io/highresdepth/).
 
 ## Citation
 
