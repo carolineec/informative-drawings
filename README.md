@@ -28,7 +28,7 @@ pip install git+https://github.com/openai/CLIP.git
 ```
 
 ## Testing
-Pre-trained model is available [here](https://drive.google.com/file/d/1up167zkluR-RIUdr433JbQU43_w9hbgg/view?usp=sharing), place the model weights in `checkpoints`.
+Pre-trained model is available [here](https://drive.google.com/file/d/11l5u5sb1PO5Z5YA3IoEHauVPm0k407C1/view?usp=sharing), place the model weights in `checkpoints`.
 
 ```
 cd checkpoints
