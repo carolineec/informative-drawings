@@ -1,6 +1,6 @@
 # Informative Drawings: Learning to generate line drawings that convey geometry and semantics
 
-### [[project page]](TODO) [[paper]](TODO) [[video]](TODO) [[demo]](https://huggingface.co/spaces/carolineec/informativedrawings)
+### [[project page]](https://carolineec.github.io/informative_drawings/) [[paper]](https://arxiv.org/abs/2203.12691) [[video]](TODO) [[demo]](https://huggingface.co/spaces/carolineec/informativedrawings)
 
 
 ## Setup
