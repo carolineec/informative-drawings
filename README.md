@@ -45,7 +45,7 @@ Results will be saved to the `results` directory by default. You can change the 
 
 ## Training
 
-We provide a pre-trained network for mapping ImageNet features into depth images [here](https://drive.google.com/file/d/1aEi-IdT1qq1gDCfEn-jd7jxhC6fEW-OE/view?usp=sharing). Place the pre-trained features to depth network in the `./checkpoints/feats2Geom` folder.
+We provide a pre-trained network for mapping ImageNet features into depth images [here](https://drive.google.com/file/d/1Ov1BNue74Yu-57X2rpdjqZy0o-fnFoly/view?usp=sharing). Place the pre-trained features to depth network in the `./checkpoints/feats2Geom` folder.
 
 ```
 cd checkpoints/feats2Geom
