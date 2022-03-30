@@ -58,7 +58,15 @@ print(opt)
 
 opt.no_flip = True
 
-if torch.cuda.is_available() and not opt.cuda:
+# By default, will run on CPU unless CUDA is requested
+device = torch.device("cpu")
+is_cuda_available = torch.cuda.is_available()
+if opt.cuda:
+    if is_cuda_available:
+        device = torch.device("cuda")
+    else:
+        print("WARNING: You requested a CUDA device, but CUDA is not available -- using CPU instead")
+elif is_cuda_available:
     print("WARNING: You have a CUDA device, so you should probably run with --cuda")
 
 with torch.no_grad():
@@ -66,13 +74,18 @@ with torch.no_grad():
 
     net_G = 0
     net_G = Generator(opt.input_nc, opt.output_nc, opt.n_blocks)
-    net_G.cuda()
+    net_G.to(device)
 
     net_GB = 0
     if opt.reconstruct == 1:
         net_GB = Generator(opt.output_nc, opt.input_nc, opt.n_blocks)
-        net_GB.cuda()
-        net_GB.load_state_dict(torch.load(os.path.join(opt.checkpoints_dir, opt.name, 'netG_B_%s.pth' % opt.which_epoch)))
+        net_GB.to(device)
+        net_GB.load_state_dict(
+            torch.load(
+                os.path.join(opt.checkpoints_dir, opt.name, 'netG_B_%s.pth' % opt.which_epoch),
+                map_location=device,
+            )
+        )
         net_GB.eval()
     
     netGeom = 0
@@ -83,18 +96,23 @@ with torch.no_grad():
         myname = os.path.join(opt.checkpoints_dir, usename, 'netGeom_%s.pth' % opt.which_epoch)
         netGeom = GlobalGenerator2(768, opt.geom_nc, n_downsampling=1, n_UPsampling=3)
 
-        netGeom.load_state_dict(torch.load(myname))
-        netGeom.cuda()
+        netGeom.load_state_dict(torch.load(myname, map_location=device))
+        netGeom.to(device)
         netGeom.eval()
 
         numclasses = opt.num_classes
         ### load pretrained inception
         net_recog = InceptionV3(opt.num_classes, False, use_aux=True, pretrain=True, freeze=True, every_feat=opt.every_feat==1)
-        net_recog.cuda()
+        net_recog.to(device)
         net_recog.eval()
 
     # Load state dicts
-    net_G.load_state_dict(torch.load(os.path.join(opt.checkpoints_dir, opt.name, 'netG_A_%s.pth' % opt.which_epoch)))
+    net_G.load_state_dict(
+        torch.load(
+            os.path.join(opt.checkpoints_dir, opt.name, 'netG_A_%s.pth' % opt.which_epoch),
+            map_location=device,
+        )
+    )
     print('loaded', os.path.join(opt.checkpoints_dir, opt.name, 'netG_A_%s.pth' % opt.which_epoch))
 
     # Set model's test mode
@@ -122,8 +140,8 @@ with torch.no_grad():
     for i, batch in enumerate(dataloader):
         if i > opt.how_many:
             break;
-        img_r  = Variable(batch['r']).cuda()
-        img_depth  = Variable(batch['depth']).cuda()
+        img_r  = Variable(batch['r']).to(device)
+        img_depth  = Variable(batch['depth']).to(device)
         real_A = img_r
 
         name = batch['name'][0]
