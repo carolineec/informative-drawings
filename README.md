@@ -35,10 +35,20 @@ cd checkpoints
 unzip model.zip
 ```
 
+### Images
+
 run pre-trained model on images in `--dataroot`. Replace `examples ` with the folder path containing your input images.
 
 ```
 python test.py --name anime_style --dataroot examples/test
+```
+
+### Videos
+
+run pre-trained model on video frames in `--dataroot` by providing the `--video` flag:
+
+```
+python test.py --name anime_style --dataroot examples/test --video
 ```
 
 Results will be saved to the `results` directory by default. You can change the save location by specifying the file path with `--results_dir`. 

@@ -1,3 +1,5 @@
+import bisect
+import decord
 import torch
 import torch.nn as nn
 import torch.utils.data as Data
@@ -17,6 +19,7 @@ from base_dataset import BaseDataset, get_params, get_transform
 import json
 
 IMG_EXTENSIONS = ['.jpg', '.JPG', '.jpeg', '.JPEG', '.png', '.PNG']
+VIDEO_EXTENSIONS = ['.mp4',]
 
 def unpickle(file):
     import pickle
@@ -27,14 +30,16 @@ def unpickle(file):
 def is_image_file(filename):
     return any(filename.endswith(extension) for extension in IMG_EXTENSIONS)
 
+def is_video_file(filename):
+    return any(filename.endswith(extension) for extension in VIDEO_EXTENSIONS)
 
-def make_dataset(dir, stop=10000):
+def make_dataset(dir, stop=10000, filter_fn=is_image_file):
     images = []
     count = 0
     assert os.path.isdir(dir), '%s is not a valid directory' % dir
     for root, _, fnames in sorted(os.walk(dir)):
         for fname in fnames:
-            if is_image_file(fname):
+            if filter_fn(fname):
                 path = os.path.join(root, fname)
                 images.append(path)
                 count += 1
@@ -151,3 +156,31 @@ class UnpairedDepthDataset(data.Dataset):
     def __len__(self):
         return self.min_length
 
+
+class VideoDataset(data.Dataset):
+    def __init__(self, root, *args, transforms_r=None, **kwargs):
+        video_files = make_dataset(root, filter_fn=is_video_file)
+        num_frames_per_video = []
+        self.videos = []
+        for video_file in video_files:
+            video = decord.VideoReader(video_file)
+            self.videos.append(video)
+            num_frames_per_video.append(len(video))
+        self.transform_r = transforms.Compose(transforms_r)
+        self.cumsum_frames = np.cumsum(num_frames_per_video)
+
+    def __len__(self):
+        return self.cumsum_frames[-1]
+
+    def __getitem__(self, i):
+        # Find the right video first
+        video_index = bisect.bisect(self.cumsum_frames, i)
+        # Find the right frame in the video
+        if video_index > 0:
+            frame_index = i - self.cumsum_frames[video_index - 1]
+        else:
+            frame_index = i
+        frame = self.videos[video_index][frame_index]
+        img_r = Image.fromarray(frame.asnumpy()).convert('RGB')
+        img_r = self.transform_r(img_r)
+        return {"r": img_r, "depth": 0, "name": f"frame_{i:d}"}

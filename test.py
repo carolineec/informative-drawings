@@ -11,7 +11,7 @@ from torch.autograd import Variable
 import torch
 
 from model import Generator, GlobalGenerator2, InceptionV3
-from dataset import UnpairedDepthDataset
+from dataset import UnpairedDepthDataset, VideoDataset
 from PIL import Image
 import numpy as np
 from utils import channel2width
@@ -52,6 +52,7 @@ parser.add_argument('--predict_depth', type=int, default=0, help='run geometry p
 parser.add_argument('--save_input', type=int, default=0, help='save input image')
 parser.add_argument('--reconstruct', type=int, default=0, help='get reconstruction')
 parser.add_argument('--how_many', type=int, default=100, help='number of images to test')
+parser.add_argument('--video', action='store_true', help='use video dataset')
 
 opt = parser.parse_args()
 print(opt)
@@ -122,8 +123,10 @@ with torch.no_grad():
     transforms_r = [transforms.Resize(int(opt.size), Image.BICUBIC),
                    transforms.ToTensor()]
 
-
-    test_data = UnpairedDepthDataset(opt.dataroot, '', opt, transforms_r=transforms_r, 
+    dataset_cls = UnpairedDepthDataset
+    if opt.video:
+        dataset_cls = VideoDataset
+    test_data = dataset_cls(opt.dataroot, '', opt, transforms_r=transforms_r,
                 mode=opt.mode, midas=opt.midas>0, depthroot=opt.depthroot)
 
     dataloader = DataLoader(test_data, batch_size=opt.batchSize, shuffle=False)
