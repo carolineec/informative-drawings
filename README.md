@@ -53,6 +53,16 @@ python test.py --name anime_style --dataroot examples/test --video
 
 Results will be saved to the `results` directory by default. You can change the save location by specifying the file path with `--results_dir`. 
 
+### CoreML
+
+if necessary, you can run your models via CoreML tools by providing the `--coreml` flag:
+
+```
+python test.py --name anime_style --dataroot examples/test --video --coreml
+```
+
+When running for the first time with the given checkpoint, it will convert the PyTorch model to Core ML and save it on disk.
+
 ## Training
 
 We provide a pre-trained network for mapping ImageNet features into depth images [here](https://drive.google.com/file/d/1Ov1BNue74Yu-57X2rpdjqZy0o-fnFoly/view?usp=sharing). Place the pre-trained features to depth network in the `./checkpoints/feats2Geom` folder.
