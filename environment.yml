@@ -15,6 +15,7 @@ dependencies:
   - pillow
   - opencv
   - scikit-learn
+  - coremltools
   - pip:
      - oyaml
      - dominate

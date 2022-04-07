@@ -11,11 +11,11 @@ class ResidualBlock(nn.Module):
         super(ResidualBlock, self).__init__()
 
         conv_block = [
-            nn.ReflectionPad2d(1),
+            nn.ReplicationPad2d(1),
             nn.Conv2d(in_features, in_features, 3),
             norm_layer(in_features),
             nn.ReLU(inplace=True),
-            nn.ReflectionPad2d(1),
+            nn.ReplicationPad2d(1),
             nn.Conv2d(in_features, in_features, 3),
             norm_layer(in_features),
         ]
@@ -32,7 +32,7 @@ class Generator(nn.Module):
 
         # Initial convolution block
         model0 = [
-            nn.ReflectionPad2d(3),
+            nn.ReplicationPad2d(3),
             nn.Conv2d(input_nc, 64, 7),
             norm_layer(64),
             nn.ReLU(inplace=True),
@@ -75,7 +75,7 @@ class Generator(nn.Module):
         self.model3 = nn.Sequential(*model3)
 
         # Output layer
-        model4 = [nn.ReflectionPad2d(3), nn.Conv2d(64, output_nc, 7)]
+        model4 = [nn.ReplicationPad2d(3), nn.Conv2d(64, output_nc, 7)]
         if sigmoid:
             model4 += [nn.Sigmoid()]
 
@@ -105,7 +105,7 @@ class ResnetBlock(nn.Module):
         conv_block = []
         p = 0
         if padding_type == "reflect":
-            conv_block += [nn.ReflectionPad2d(1)]
+            conv_block += [nn.ReplicationPad2d(1)]
         elif padding_type == "replicate":
             conv_block += [nn.ReplicationPad2d(1)]
         elif padding_type == "zero":
@@ -123,7 +123,7 @@ class ResnetBlock(nn.Module):
 
         p = 0
         if padding_type == "reflect":
-            conv_block += [nn.ReflectionPad2d(1)]
+            conv_block += [nn.ReplicationPad2d(1)]
         elif padding_type == "replicate":
             conv_block += [nn.ReplicationPad2d(1)]
         elif padding_type == "zero":
@@ -158,7 +158,7 @@ class GlobalGenerator2(nn.Module):
 
         mult = 8
         model = [
-            nn.ReflectionPad2d(4),
+            nn.ReplicationPad2d(4),
             nn.Conv2d(input_nc, ngf * mult, kernel_size=7, padding=0),
             norm_layer(ngf * mult),
             activation,
@@ -212,13 +212,13 @@ class GlobalGenerator2(nn.Module):
 
         if use_sig:
             model += [
-                nn.ReflectionPad2d(3),
+                nn.ReplicationPad2d(3),
                 nn.Conv2d(ngf, output_nc, kernel_size=7, padding=0),
                 nn.Sigmoid(),
             ]
         else:
             model += [
-                nn.ReflectionPad2d(3),
+                nn.ReplicationPad2d(3),
                 nn.Conv2d(ngf, output_nc, kernel_size=7, padding=0),
                 nn.Tanh(),
             ]

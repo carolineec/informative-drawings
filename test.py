@@ -4,6 +4,7 @@ import argparse
 import os
 import sys
 
+import coremltools as ct
 import torch
 import torchvision.transforms as transforms
 from PIL import Image
@@ -14,6 +15,72 @@ from torchvision.utils import save_image
 from dataset import UnpairedDepthDataset, VideoDataset
 from model import Generator, GlobalGenerator2, InceptionV3
 from utils import channel2width
+
+
+CT_INPUT_NAME = "input"
+
+
+def create_generators(pt_checkpoint_path, device, size, use_coreml=False, **kwargs):
+    """Creates models: pytorch and, optionally, corresponding coreml"""
+    if use_coreml:
+        coreml_checkpoint_path = f"{pt_checkpoint_path:s}.mlmodel"
+        if os.path.exists(coreml_checkpoint_path):
+            ct_model = ct.models.MLModel(coreml_checkpoint_path)
+        else:
+            pt_model = create_pt_generator(pt_checkpoint_path, device, **kwargs)
+            ct_model = convert_to_coreml(pt_model, size)
+            ct_model.save(coreml_checkpoint_path)
+        return None, ct_model
+    pt_model = create_pt_generator(pt_checkpoint_path, device, **kwargs)
+    return pt_model, None
+
+
+def create_pt_generator(checkpoint_path, device, **kwargs):
+    """Creates the generator model in pytorch"""
+    pt_model = Generator(**kwargs).eval()
+    pt_model.to(device)
+    print(
+        pt_model.load_state_dict(
+            torch.load(checkpoint_path, map_location=device), strict=False
+        )
+    )
+    return pt_model
+
+
+def convert_to_coreml(model, size):
+    """Converts pytorch model to coreml"""
+    inputs = torch.randn(1, 3, size, size)
+    traced_model = torch.jit.trace(model, inputs)
+    ct_input = ct.TensorType(
+        name=CT_INPUT_NAME,
+        shape=ct.Shape(
+            shape=(
+                ct.RangeDim(),
+                3,
+                ct.RangeDim(),
+                ct.RangeDim(),
+            ),
+        ),
+    )
+    return ct.convert(
+        traced_model,
+        inputs=[ct_input],
+    )
+
+
+def run_generator(pt_model, coreml_model, input_tensor):
+    """Runs generator model. Runs coreml if provided, otherwise pytorch"""
+    if coreml_model is None:
+        image_tensor = pt_model(input_tensor)
+    else:
+        # Since there is a single output, we can just subset ".values";
+        # in the multi-output case, extracting the output by its name is recommended.
+        image = list(
+            coreml_model.predict({CT_INPUT_NAME: input_tensor.cpu().numpy()}).values()
+        )[-1]
+        image_tensor = torch.from_numpy(image)
+    return image_tensor
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--name", required=True, type=str, help="name of this experiment")
@@ -129,6 +196,7 @@ parser.add_argument(
     "--how_many", type=int, default=100, help="number of images to test"
 )
 parser.add_argument("--video", action="store_true", help="use video dataset")
+parser.add_argument("--coreml", action="store_true", help="use coreml for inference")
 
 opt = parser.parse_args()
 print(opt)
@@ -151,12 +219,20 @@ elif is_cuda_available:
 with torch.no_grad():
     # Networks
 
-    net_G = 0
-    net_G = Generator(opt.input_nc, opt.output_nc, opt.n_blocks)
-    net_G.to(device)
+    net_G, net_G_coreml = create_generators(
+        os.path.join(opt.checkpoints_dir, opt.name, "netG_A_%s.pth" % opt.which_epoch),
+        device,
+        opt.size,
+        use_coreml=opt.coreml,
+        input_nc=opt.input_nc,
+        output_nc=opt.output_nc,
+        n_residual_blocks=opt.n_blocks,
+    )
 
     net_GB = 0
     if opt.reconstruct == 1:
+        if opt.coreml:
+            raise ValueError("Cannot yet run reconstruction with coreml")
         net_GB = Generator(opt.output_nc, opt.input_nc, opt.n_blocks)
         net_GB.to(device)
         net_GB.load_state_dict(
@@ -171,6 +247,8 @@ with torch.no_grad():
 
     netGeom = 0
     if opt.predict_depth == 1:
+        if opt.coreml:
+            raise ValueError("Cannot yet run depth prediction with coreml")
         usename = opt.name
         if (len(opt.geom_name) > 0) and (
             os.path.exists(os.path.join(opt.checkpoints_dir, opt.geom_name))
@@ -198,25 +276,8 @@ with torch.no_grad():
         net_recog.to(device)
         net_recog.eval()
 
-    # Load state dicts
-    net_G.load_state_dict(
-        torch.load(
-            os.path.join(
-                opt.checkpoints_dir, opt.name, "netG_A_%s.pth" % opt.which_epoch
-            ),
-            map_location=device,
-        )
-    )
-    print(
-        "loaded",
-        os.path.join(opt.checkpoints_dir, opt.name, "netG_A_%s.pth" % opt.which_epoch),
-    )
-
-    # Set model's test mode
-    net_G.eval()
-
     transforms_r = [
-        transforms.Resize(int(opt.size), Image.BICUBIC),
+        transforms.Resize((int(opt.size), int(opt.size)), Image.BICUBIC),
         transforms.ToTensor(),
     ]
 
@@ -254,7 +315,7 @@ with torch.no_grad():
         name = batch["name"][0]
 
         input_image = real_A
-        image = net_G(input_image)
+        image = run_generator(net_G, net_G_coreml, input_image)
         save_image(image.data, full_output_dir + "/%s_out.png" % name)
 
         if opt.predict_depth == 1:
