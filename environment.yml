@@ -4,6 +4,7 @@ channels:
   - defaults
 dependencies:
   - python
+  - decord
   - pytorch
   - torchvision
   - torchaudio
@@ -13,7 +14,8 @@ dependencies:
   - tensorboard
   - pillow
   - opencv
-  - scikit-learn 
+  - scikit-learn
+  - coremltools
   - pip:
      - oyaml
      - dominate

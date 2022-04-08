@@ -35,13 +35,33 @@ cd checkpoints
 unzip model.zip
 ```
 
+### Images
+
 run pre-trained model on images in `--dataroot`. Replace `examples ` with the folder path containing your input images.
 
 ```
 python test.py --name anime_style --dataroot examples/test
 ```
 
+### Videos
+
+run pre-trained model on video frames in `--dataroot` by providing the `--video` flag:
+
+```
+python test.py --name anime_style --dataroot examples/test --video
+```
+
 Results will be saved to the `results` directory by default. You can change the save location by specifying the file path with `--results_dir`. 
+
+### CoreML
+
+if necessary, you can run your models via CoreML tools by providing the `--coreml` flag:
+
+```
+python test.py --name anime_style --dataroot examples/test --video --coreml
+```
+
+When running for the first time with the given checkpoint, it will convert the PyTorch model to Core ML and save it on disk.
 
 ## Training
 
