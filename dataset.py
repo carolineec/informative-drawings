@@ -96,7 +96,7 @@ class UnpairedDepthDataset(data.Dataset):
             elif len(self.img2) > len(self.data):
                 howmanyrepeat = (len(self.img2) // len(self.data)) + 1
                 self.data = self.data * howmanyrepeat
-                self.labels = self.labels * howmanyrepeat
+                self.depth_maps = self.depth_maps * howmanyrepeat
             
 
             cutoff = min(len(self.data), len(self.img2))
